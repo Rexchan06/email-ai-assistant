@@ -86,7 +86,7 @@ class GoogleAuthController extends Controller
 
         Auth::login($user);
 
-        return redirect('/dashboard');
+        return redirect('http://localhost:5173/dashboard');
     }
 
     public function logout() {

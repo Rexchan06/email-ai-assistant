@@ -1,11 +1,18 @@
 import { Box, Button, Typography } from '@mui/material'
 import googleIcon from '../assets/google.svg.png'
+import logo from '../assets/logo.png'
 
 function LoginBox() {
     return (
         <Box sx={{ borderRadius: 2, p: 8, boxShadow: 2, maxWidth: 400, textAlign: 'center' }}>
             <Typography variant='h3' sx={{ mb: 2, textAlign: 'center', fontWeight: 'bold' }}>
-                Email AI Assistant
+                <img src={logo} alt="Email AI Assistant" style={{ width: 40, height: 40, marginRight: 8 }} />
+                Email<Box component="span" sx={{
+                    background: 'linear-gradient(45deg, #1976d2, #9c27b0)',
+                    backgroundClip: 'text',
+                    WebkitBackgroundClip: 'text',
+                    color: 'transparent'
+                    }}>AI</Box> 
             </Typography>
             <Typography variant='h6' sx={{ mb: 3, textAlign: 'center', color: 'text.secondary' }}>
                 Clean your inbox with AI
