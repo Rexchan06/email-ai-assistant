@@ -21,3 +21,10 @@ Route::get('/dashboard', function () {
 
 Route::post('/process-email', [EmailController::class, 'processEmail'])->middleware('auth')->name('email.process');
 Route::post('/logout', [GoogleAuthController::class, 'logout'])->middleware('auth')->name('logout');
+
+Route::get('/api/user', function () {
+    return response()->json([
+        'name' => auth()->user()->name,
+        'email' => auth()->user()->email,
+    ]);
+});

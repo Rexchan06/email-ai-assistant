@@ -1,11 +1,33 @@
 import { Box, Typography, IconButton, Avatar, Menu, MenuItem } from '@mui/material'
 import { Logout } from '@mui/icons-material'
 import logo from '../assets/logo.png'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 function NavBar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
     const [anchorEl, setAnchorEl] = useState(null)
+    const [userName, setUserName] = useState('')
+
+    useEffect(() => {
+        fetch(`${import.meta.env.VITE_API_BASE_URL}/api/user`, {
+            credentials: 'include'
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.json()
+            } else {
+                throw new Error('Not authenticated')
+            }})
+        .then(data => {
+                setUserName(data.name) 
+        })
+        .catch(error => {
+            console.error('Error fetching user:', error)
+            window.location.href = '/login'
+        })
+    }, [])
+
+    const userNameFirstLetter = userName.charAt(0).toUpperCase()
 
     return (
         <>
@@ -36,7 +58,7 @@ function NavBar() {
                     setIsMenuOpen(true)
                     }}
                 >
-                    <Avatar sx={{ width: 40, height: 40, backgroundColor: 'primary.main', color: 'white' }}>R</Avatar>
+                    <Avatar sx={{ width: 40, height: 40, backgroundColor: 'primary.main', color: 'white' }}>{userNameFirstLetter}</Avatar>
                 </IconButton>
             </Box>
             <Menu
