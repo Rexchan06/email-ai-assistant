@@ -4,6 +4,7 @@ import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import dayjs from 'dayjs'
 import { useState, useEffect } from 'react'
+import { processEmails } from '../utils/api'
 
 function EmailProcessingForm() {
     const [daysOld, setDaysOld] = useState(null)
@@ -32,19 +33,36 @@ function EmailProcessingForm() {
         }
     }
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (!selectedDate || !category) {
             alert('Please select a date and category')
             return
         }
 
+        const token = localStorage.getItem('auth_token')
+        if (!token) {
+            alert('Authentication required. Please login again.')
+            window.location.href = '/login'
+            return
+        }
+
         setIsSubmit(true)
 
-        console.log({
-        daysOld: daysOld,
-        category: category,
-        confidence: confidence
-        })
+        try {
+            const results = await processEmails({
+                daysOld: daysOld,
+                category: category,
+                confidence: confidence,
+                token: token
+            })
+
+            alert(`Success! ${results.summaryMessage}`)
+            console.log('Full results:', results)
+        } catch (error) {
+            alert(`Error: ${error.message}`)
+        } finally {
+            setIsSubmit(false)
+        }
     }
 
     useEffect(() => {

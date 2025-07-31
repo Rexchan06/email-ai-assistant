@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Laravel\Socialite\Facades\Socialite;
 use App\Models\User;
+use Illuminate\Http\Request;
 
 class GoogleAuthController extends Controller
 {
@@ -94,5 +95,66 @@ class GoogleAuthController extends Controller
         request()->session()->invalidate();
         request()->session()->regenerateToken();
         return redirect('/');
+    }
+
+    public function apiRedirect() 
+    {
+        $url = Socialite::driver('google')
+            ->stateless()
+            ->redirectUrl('http://localhost:8000/auth/google/callback')
+            ->scopes(['email', 'profile', 'https://www.googleapis.com/auth/gmail.modify'])
+            ->with(['prompt' => 'select_account'])
+            ->redirect()
+            ->getTargetUrl();
+
+        return response()->json(['url' => $url]);
+    }
+
+    public function apiCallback() 
+    {
+        try {
+            $googleUser = Socialite::driver('google')->stateless()->user();
+
+            $user = User::where('email', $googleUser->email)->first();
+
+            if (!$user) {
+              $user = User::create([
+                  'name' => $googleUser->name,
+                  'email' => $googleUser->email,
+                  'google_id' => $googleUser->id,
+                  'google_token' => $googleUser->token,
+              ]);  
+            } else {
+              $user->update([
+                  'google_id' => $googleUser->id,
+                  'google_token' => $googleUser->token,
+              ]);
+            }
+
+            $token = $user->createToken('auth-token')->plainTextToken;
+
+            $redirectUrl = 'http://localhost:5173/auth/callback?' . http_build_query([
+                'token' => $token,
+                'name' => $user->name,
+                'email' => $user->email,
+            ]);
+
+            return redirect($redirectUrl);
+        } catch (\Exception $e) {
+            // Add detailed error logging
+            \Log::error('OAuth Callback Error: ' . $e->getMessage());
+            \Log::error('OAuth Callback Trace: ' . $e->getTraceAsString());
+            return redirect('http://localhost:5173/auth/error?message=' . urlencode('Authentication failed'));
+        }
+    }
+
+    public function apiLogout(Request $request) {
+        try {
+            $request->user()->currentAccessToken()->delete();
+
+            return response()->json(['message' => 'Logged out successfully']);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Logout failed'], 500);
+        }
     }
 }

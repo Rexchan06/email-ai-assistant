@@ -107,6 +107,19 @@ class GeminiService
         $classifiedEmails = [];
 
         foreach ($responses as $index => $response) {
+            if ($response instanceof \Illuminate\Http\Client\ConnectionException) {
+              // Handle connection error - add fallback classifications for this chunk
+              foreach ($chunks[$index] as $email) {
+                  $classifiedEmails[] = [
+                      'id' => $email['id'],
+                      'subject' => $email['subject'],
+                      'from' => $email['from'],
+                      'category' => 'Unknown',
+                      'confidence' => 0,
+                  ];
+              }
+              continue;
+            }
             if ($response->successful()) {
                 // Extract the text from Gemini response (same as your batch method)
                 $result = $response->json();

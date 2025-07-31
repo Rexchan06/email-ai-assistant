@@ -19,7 +19,7 @@ Route::get('/dashboard', function () {
 // Route::get('/test-gmail-details', [GoogleAuthController::class, 'testGmailDetails'])->middleware('auth');
 // Route::get('/test-gemini', [GoogleAuthController::class, 'testGemini'])->middleware('auth');
 
-Route::post('/process-email', [EmailController::class, 'processEmail'])->middleware('auth')->name('email.process');
+// Route::post('/process-email', [EmailController::class, 'processEmail'])->middleware('auth')->name('email.process');
 Route::post('/logout', [GoogleAuthController::class, 'logout'])->middleware('auth')->name('logout');
 
 Route::get('/api/user', function () {
@@ -28,3 +28,5 @@ Route::get('/api/user', function () {
         'email' => auth()->user()->email,
     ]);
 });
+
+Route::get('/auth/google/callback', [GoogleAuthController::class, 'apiCallback']);

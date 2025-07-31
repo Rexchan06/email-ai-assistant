@@ -1,9 +1,26 @@
 import { Box, Button, Typography, Card, Chip } from '@mui/material'
 import { AutoAwesome, Google, Security, Speed, SmartToy } from '@mui/icons-material'
-import googleIcon from '../assets/google.svg.png'
+import { getGoogleAuthUrl } from '../utils/api'
+import { useState } from 'react'
+
 import logo from '../assets/logo.png'
 
 function LoginBox() {
+    const [isLoading, setIsLoading] = useState(false)
+
+    const handleGoogleLogin = async () => {
+        try {
+            setIsLoading(true)
+            const { url } = await getGoogleAuthUrl()
+            window.location.href = url
+        } catch (error) {
+            console.error('Login failed:', error)
+            alert('Login failed. Please try again.')
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
     return (
         <Card sx={{
             p: 6,
@@ -150,7 +167,8 @@ function LoginBox() {
             <Button
                 variant='contained'
                 size='large' 
-                onClick={() => window.location.href = `${import.meta.env.VITE_API_BASE_URL}/auth/google`}
+                onClick={handleGoogleLogin}
+                disabled={isLoading}
                 sx={{
                     mx: 'auto',
                     px: 6,
@@ -174,7 +192,7 @@ function LoginBox() {
                 }}
             >
                 <Google sx={{ fontSize: 24 }} />
-                Continue with Google
+                {isLoading ? 'Connecting...' : 'Continue with Google'}
             </Button>
 
             {/* Security Notice */}
