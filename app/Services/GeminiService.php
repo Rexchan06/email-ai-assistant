@@ -86,7 +86,7 @@ class GeminiService
 
         $prompts = array_map(function ($chunk) {
             $emailCount = count($chunk);
-            $prompt = "Classify as Promotion/Social/Update/Important with confidence 1-100:";
+            $prompt = "Classify as promotions/social/updates/important with confidence 1-100:";
             foreach ($chunk as $index => $email) {
                 $prompt .= "Subject: \"{$email['subject']}\", From: \"{$email['from']}\"\n";
             }
