@@ -14,6 +14,7 @@ function EmailProcessingForm() {
     const [category, setCategory] = useState('')
     const [confidence, setConfidence] = useState(80)
     const [isSubmit, setIsSubmit] = useState(false)
+    const [isLoading, setIsLoading] = useState(false);
     const [results, setResults] = useState(null)
     const [modalState, setModalState] = useState(false)
 
@@ -36,7 +37,10 @@ function EmailProcessingForm() {
         }
     }
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+        setIsLoading(true)
+
         if (!selectedDate || !category) {
             alert('Please select a date and category')
             return
@@ -66,6 +70,7 @@ function EmailProcessingForm() {
             alert(`Error: ${error.message}`)
         } finally {
             setIsSubmit(false)
+            setIsLoading(false)
         }
     }
 
