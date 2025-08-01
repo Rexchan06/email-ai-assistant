@@ -22,7 +22,12 @@ class GroqService
         $prompts = array_map(function ($chunk) {
             $emailCount = count($chunk);
             $prompt = "ONLY respond with the exact format: category,confidence|category,confidence|...\n";
-            $prompt .= "Classify {$emailCount} emails as ONLY promotions/social/updates/important with confidence 1-100:\n";
+            $prompt .= "Classify {$emailCount} emails as:\n";
+            $prompt .= "- promotions (marketing, sales, deals)\n";
+            $prompt .= "- social (social media)\n";
+            $prompt .= "- updates (statements, receipts, notifications)\n";
+            $prompt .= "- important (security, urgent, financial)\n";
+            $prompt .= "with confidence 1-100:\n";
             foreach ($chunk as $index => $email) {
                 $prompt .= "Email " . ($index + 1) . ": Subject: \"{$email['subject']}\", From: \"{$email['from']}\"\n";
             }
