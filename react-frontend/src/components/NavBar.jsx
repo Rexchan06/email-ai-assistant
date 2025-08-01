@@ -2,6 +2,7 @@ import { Box, Typography, IconButton, Avatar, Menu, MenuItem, Chip } from '@mui/
 import { Logout, AutoAwesome, Person } from '@mui/icons-material'
 import logo from '../assets/logo.png'
 import { useState, useEffect } from 'react'
+import { logout } from '../utils/api'
 
 function NavBar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -9,8 +10,24 @@ function NavBar() {
     const [userName, setUserName] = useState('')
 
     useEffect(() => {
+        const token = localStorage.getItem('auth_token')
+        const storedUserName = localStorage.getItem('user_name')
+        
+        if (!token) {
+            window.location.href = '/login'
+            return
+        }
+
+        if (storedUserName) {
+            setUserName(storedUserName)
+        }
+
         fetch(`${import.meta.env.VITE_API_BASE_URL}/api/user`, {
-            credentials: 'include'
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
         })
         .then(response => {
             if (response.ok) {
@@ -20,9 +37,13 @@ function NavBar() {
             }})
         .then(data => {
                 setUserName(data.name) 
+                localStorage.setItem('user_name', data.name)
         })
         .catch(error => {
             console.error('Error fetching user:', error)
+            localStorage.removeItem('auth_token')
+            localStorage.removeItem('user_name')
+            localStorage.removeItem('user_email')
             window.location.href = '/login'
         })
     }, [])
@@ -203,7 +224,21 @@ function NavBar() {
                 </Box>
                 
                 <MenuItem 
-                    onClick={() => window.location.href = '/login'}
+                    onClick={async () => {
+                        try {
+                            const token = localStorage.getItem('auth_token')
+                            if (token) {
+                                await logout(token)
+                            }
+                        } catch (error) {
+                            console.error('Logout error:', error)
+                        } finally {
+                            localStorage.removeItem('auth_token')
+                            localStorage.removeItem('user_name')
+                            localStorage.removeItem('user_email')
+                            window.location.href = '/login'
+                        }
+                    }}
                     sx={{
                         mx: 1,
                         my: 0.5,

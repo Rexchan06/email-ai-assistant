@@ -88,99 +88,8 @@ class EmailService
         }
     }
 
-    // public function getBatchEmailDetails($messageIds)
-    // {
-    //     file_put_contents('debug.txt', "=== Batch method called with " . count($messageIds) . " IDs ===\n", FILE_APPEND);
-        
-    //     try {
-    //         $boundary = 'batch_' . uniqid();
-    //         $batchBody = '';
-            
-    //         foreach ($messageIds as $index => $messageId) {
-    //             $batchBody .= "--{$boundary}\r\n";
-    //             $batchBody .= "Content-Type: application/http\r\n";
-    //             $batchBody .= "Content-ID: <item" . ($index + 1) . ":request@gmail.googleapis.com>\r\n\r\n";
-    //             $batchBody .= "GET /gmail/v1/users/me/messages/{$messageId}?format=metadata\r\n\r\n";
-    //         }
 
-    //         $batchBody .= "--{$boundary}--";
-
-    //         file_put_contents('debug.txt', "Request body preview:\n" . substr($batchBody, 0, 500) . "\n===END PREVIEW===\n", FILE_APPEND);
-
-    //         $responses = Http::withHeaders([
-    //             'Authorization' => 'Bearer ' . $this->token,
-    //             'Host' => 'gmail.googleapis.com',
-    //             'Content-Type' => 'multipart/mixed; boundary=' . $boundary
-    //             ])->timeout(30)
-    //             ->post('https://gmail.googleapis.com/batch', $batchBody);
-
-    //         file_put_contents('debug.txt', "Batch API call completed. Status: " . $responses->status() . "\n", FILE_APPEND);
-            
-    //         if (!$responses->successful()) {
-    //             file_put_contents('debug.txt', "API call failed with status: " . $responses->status() . "\n", FILE_APPEND);
-    //             file_put_contents('debug.txt', "Error response: " . $responses->body() . "\n", FILE_APPEND);
-    //             return $this->handleApiError($responses);
-    //         }
-                        
-    //         $responseBody = $responses->body();
-    //         file_put_contents('debug.txt', "Response body length: " . strlen($responseBody) . "\n", FILE_APPEND);
-
-    //         $pattern = '/\{"id":"[^"]+",.*?\}/s';
-    //         preg_match_all($pattern, $responseBody, $matches);
-    //         file_put_contents('debug.txt', "Regex found " . count($matches[0]) . " potential JSON matches\n", FILE_APPEND);
-            
-    //         $emailDatas = [];
-
-    //         foreach ($matches[0] as $potentialJson) {
-    //             $decoded = json_decode($potentialJson, true);
-    //             if ($decoded && isset($decoded['id'])) {
-    //                 $emailDatas[] = $decoded;
-    //             }
-    //         }
-
-    //         $emailDetails = [];
-
-    //         foreach ($emailDatas as $emailData) {
-    //             $headers = $emailData['payload']['headers'] ?? [];
-    //             $subject = collect($headers)->firstWhere('name', 'Subject')['value'] ?? 'No Subject';
-    //             $from = collect($headers)->firstWhere('name', 'From')['value'] ?? 'Unknown Sender';
-    //             $emailDetails[] = [
-    //                 'id' => $emailData['id'],
-    //                 'subject' => $subject,
-    //                 'from' => $from,
-    //             ];
-    //         }
-            
-    //         file_put_contents('debug.txt', "Final result: " . count($emailDetails) . " email details created\n", FILE_APPEND);
-    //         return $emailDetails;
-    //     } catch (Exception $e) {
-    //         file_put_contents('debug.txt', "EXCEPTION: " . $e->getMessage() . " in " . $e->getFile() . " at line " . $e->getLine() . "\n", FILE_APPEND);
-    //         $emailDetails = [];
-
-    //         foreach ($messageIds as $message) {
-    //             $emailDetails[] = [
-    //                 'success' => false,
-    //                 'error' => 'Network error: ' . $e->getMessage(),
-    //                 'id' => null,
-    //                 'subject' => null,
-    //                 'from' => null,
-    //             ];
-    //         }
-
-    //         // Add this to see what went wrong:
-    //         return [
-    //             'emails' => $emailDetails,
-    //             'debug' => [
-    //                 'error' => true,
-    //                 'exception_message' => $e->getMessage(),
-    //                 'exception_file' => $e->getFile(),
-    //                 'exception_line' => $e->getLine()
-    //             ]
-    //         ];
-    //     }
-    // }
-
-    public function getConcurrentEmailDetails($messageIds, $chunkSize = 15)
+    public function getConcurrentEmailDetails($messageIds, $chunkSize = 25)
     {
         $chunks = array_chunk($messageIds, $chunkSize);
         $allEmailDetails = [];
@@ -236,6 +145,62 @@ class EmailService
         }
         
         return $chunkResults;
+    }
+
+    public function fetchEmailsWithDetails($daysOld, $maxResults = 100, $pageToken = null)
+    {
+        $query = "older_than:{$daysOld}d";
+        $fields = "messages(id,payload(headers)),nextPageToken";
+
+        $params = [
+            'q' => $query,
+            'maxResults' => $maxResults,
+            'fields' => $fields
+        ];
+
+        if ($pageToken) {
+            $params['pageToken'] = $pageToken;
+        }
+
+        try {
+            $response = Http::withToken($this->token)
+                ->timeout(30)
+                ->get('https://gmail.googleapis.com/gmail/v1/users/me/messages', $params);
+
+            if (!$response->successful()) {
+                return $this->handleApiError($response);
+            }
+
+            $data = $response->json();
+            $messages = $data['messages'] ?? [];
+
+            $emailDetails = [];
+
+            foreach ($messages as $message) {
+                $headers = $message['payload']['headers'] ?? [];
+                $subject = collect($headers)->firstWhere('name', 'Subject')['value'] ?? 'No Subject';
+                $from = collect($headers)->firstWhere('name', 'From')['value'] ?? 'Unknown Sender';
+
+                $emailDetails[] = [
+                    'id' => $message['id'],
+                    'subject' => $subject,
+                    'from' => $from
+                ];
+            }
+
+            return [
+                'emailDetails' => $emailDetails,
+                'nextPageToken' => null,
+            ];
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'error' => 'Network error: ' . $e->getMessage(),
+                'messages' => [],
+                'nextPageToken' => null,
+                'resultSizeEstimate' => 0
+            ];
+        }
     }
 
     public function deleteEmail($messageId) 

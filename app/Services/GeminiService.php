@@ -145,12 +145,16 @@ class GeminiService
             if (count($part) >= 2) {
                 $finalResponse[] = [
                     'id' => $chunk[$index]['id'],
+                    'subject' => $chunk[$index]['subject'],  // ✅ Preserve original subject
+                    'from' => $chunk[$index]['from'],        // ✅ Preserve original from
                     'category' => trim($part[0]),
                     'confidence' => (int) trim($part[1]),
                 ];
             } else {
                 $finalResponse[] = [
                     'id' => $chunk[$index]['id'],
+                    'subject' => $chunk[$index]['subject'],  // ✅ Preserve original subject
+                    'from' => $chunk[$index]['from'],        // ✅ Preserve original from
                     'category' => 'Unknown',
                     'confidence' => 0,
                 ];

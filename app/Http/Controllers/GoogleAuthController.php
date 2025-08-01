@@ -101,7 +101,7 @@ class GoogleAuthController extends Controller
     {
         $url = Socialite::driver('google')
             ->stateless()
-            ->redirectUrl('http://localhost:8000/auth/google/callback')
+            ->redirectUrl('http://localhost:8000/api/auth/google/callback')
             ->scopes(['email', 'profile', 'https://www.googleapis.com/auth/gmail.modify'])
             ->with(['prompt' => 'select_account'])
             ->redirect()

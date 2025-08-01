@@ -6,7 +6,7 @@ function DashboardPage() {
     return (
         <Box>
             <NavBar />
-            <Box sx={{ mt: 7 }}>
+            <Box sx={{ mt: 2 }}>
                 <EmailProcessingForm />
             </Box>
         </Box>
