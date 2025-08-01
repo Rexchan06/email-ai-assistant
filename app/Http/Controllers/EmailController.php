@@ -148,7 +148,7 @@ class EmailController extends Controller
             $cumulativeTimings['batch_delete'] += round((microtime(true) - $deleteStart) * 1000, 2);
             $batchNumber++;
 
-        } while ($nextPageToken && $batchNumber < 11);
+        } while ($nextPageToken && $batchNumber < 41);
         
         $cumulativeTimings['total_time'] += round((microtime(true) - $startTime) * 1000, 2);
 
@@ -175,7 +175,8 @@ class EmailController extends Controller
                 'requestedConfidence' => $confidenceThreshold,
                 'detailedTimings' => $cumulativeTimings,
                 'errorMessage' => data_get($response, 'error'),
-                'deletionDebug' => $debugInfo
+                'deletionDebug' => $debugInfo,
+                'classifiedEmails' => $totalClassifiedEmails
             ]
         ];
 

@@ -89,7 +89,7 @@ class EmailService
     }
 
 
-    public function getConcurrentEmailDetails($messageIds, $chunkSize = 25)
+    public function getConcurrentEmailDetails($messageIds, $chunkSize = 50)
     {
         $chunks = array_chunk($messageIds, $chunkSize);
         $allEmailDetails = [];

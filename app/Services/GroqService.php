@@ -15,7 +15,7 @@ class GroqService
         $this->apiUrl = 'https://api.groq.com/openai/v1/chat/completions';
     }
 
-    public function classifyEmailsConcurrent($emails, $chunkSize = 10)
+    public function classifyEmailsConcurrent($emails, $chunkSize = 25)
     {
         $chunks = array_chunk($emails, $chunkSize);
 
@@ -48,7 +48,7 @@ class GroqService
                         ['role' => 'user', 'content' => $prompt]
                     ],
                     'temperature' => 0.1,
-                    'max_tokens' => 500
+                    'max_tokens' => 100
                 ]);
             }, $prompts)
         );

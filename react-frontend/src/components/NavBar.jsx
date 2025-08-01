@@ -65,7 +65,7 @@ function NavBar() {
                     rgba(255, 255, 255, 0.9) 100%)`,
                 borderBottom: '1px solid rgba(99, 102, 241, 0.1)',
                 boxShadow: '0 8px 32px rgba(0, 0, 0, 0.06)',
-                py: 2.5, 
+                py: 2, 
                 px: 4,
                 transition: 'all 0.3s ease'
             }}>
