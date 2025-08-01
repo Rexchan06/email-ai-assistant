@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route} from 'react-router-dom'
 import LoginPage from './pages/LoginPage'
 import DashboardPage from './pages/DashboardPage'
+import LandingPage from './pages/LandingPage'
 import AuthCallback from './components/AuthCallback'
 
 function App() {
@@ -10,7 +11,7 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/auth/callback" element={<AuthCallback />}></Route>
         <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="/" element={<h1>Home - Redirect to Login</h1>} />
+        <Route path="/" element={<LandingPage />} />
       </Routes>
     </BrowserRouter>
   )

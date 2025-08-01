@@ -148,7 +148,7 @@ class EmailController extends Controller
             $cumulativeTimings['batch_delete'] += round((microtime(true) - $deleteStart) * 1000, 2);
             $batchNumber++;
 
-        } while ($nextPageToken && $batchNumber < 41);
+        } while ($nextPageToken && $batchNumber < 2);
         
         $cumulativeTimings['total_time'] += round((microtime(true) - $startTime) * 1000, 2);
 

@@ -84,7 +84,7 @@ function EmailProcessingForm() {
     return (
         <>
             <Card sx={{
-                p: 3,
+                p: 2.5,
                 maxWidth: 1000,
                 mx: 'auto',
                 borderRadius: 6,
@@ -109,8 +109,8 @@ function EmailProcessingForm() {
                 }
             }}>
                 {/* Header Section */}
-                <Box sx={{ mb: 4, textAlign: 'center' }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1, mb: 2 }}>
+                <Box sx={{ mb: 3, textAlign: 'center' }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1, mb: 1.5 }}>
                         <AutoAwesome sx={{ color: 'primary.main', fontSize: 28 }} />
                         <Typography variant="h5" sx={{ fontWeight: 700, color: 'text.primary' }}>
                             Clean Your Inbox with Email
@@ -131,23 +131,23 @@ function EmailProcessingForm() {
                     <Box sx={{ 
                         display: 'grid', 
                         gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-                        gap: 4,
+                        gap: 3,
                         alignItems: 'end'
                     }}>
                         
                         {/* Date Section */}
                         <Box>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
                                 <CalendarToday sx={{ color: '#6366f1', fontSize: 20 }} />
                                 <Typography variant="body1" sx={{ fontWeight: 600, color: 'text.primary' }}>
                                     Time Range
                                 </Typography>
                             </Box>
-                            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                            <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
                                 Clean emails older than:
                             </Typography>
                             
-                            <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
+                            <Box sx={{ display: 'flex', gap: 1, mb: 1.5 }}>
                                 <Button
                                     variant={selectedPreset === '7d' ? 'contained' : 'outlined'}
                                     size="small"
@@ -261,13 +261,13 @@ function EmailProcessingForm() {
 
                         {/* Category Section */}
                         <Box>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
                                 <Category sx={{ color: '#8b5cf6', fontSize: 20 }} />
                                 <Typography variant="body1" sx={{ fontWeight: 600, color: 'text.primary' }}>
                                     Email Type
                                 </Typography>
                             </Box>
-                            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                            <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
                                 Target category to clean:
                             </Typography>
                             
@@ -320,13 +320,13 @@ function EmailProcessingForm() {
 
                         {/* Confidence Section */}
                         <Box>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
                                 <TuneRounded sx={{ color: '#10b981', fontSize: 20 }} />
                                 <Typography variant="body1" sx={{ fontWeight: 600, color: 'text.primary' }}>
                                     AI Confidence
                                 </Typography>
                             </Box>
-                            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                            <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
                                 Minimum confidence: <strong>{confidence}%</strong>
                             </Typography>
                             
@@ -369,7 +369,7 @@ function EmailProcessingForm() {
                     </Box>
 
                     {/* Submit Button */}
-                    <Box sx={{ mt: 5, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
+                    <Box sx={{ mt: 4, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2.5 }}>
                         <Button
                             variant="contained"
                             size="large"
